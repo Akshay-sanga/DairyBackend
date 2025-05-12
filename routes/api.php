@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MilkCollectionController;
 use App\Http\Controllers\MilkRateController;
+use App\Http\Controllers\SnfChartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -45,5 +46,10 @@ Route::post('/delete-milk-rates/{id}', [MilkRateController::class,'destroy']);
 Route::post('milk-rates/import', [MilkRateController::class, 'importFile']);
 Route::get('/export-demo-both', [MilkRateController::class, 'exportDemoBoth']);
 
+
+
+//////////////////////snf chart/////////////////////////////////////////////////
+
+Route::post('/snf-chart/save', [SnfChartController::class, 'store']);
 
 });

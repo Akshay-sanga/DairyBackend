@@ -186,7 +186,7 @@ public function exportDemoBoth()
     $excelPath = $tempPath . '/milk_rate_demo.xlsx';
     Excel::store(new MilkRatesExport($demoData), 'temp_export/milk_rate_demo.xlsx');
 
-    // PDF (no Blade view used)
+  
     $html = '<h1>Milk Rate Demo</h1><table border="1" cellpadding="5">';
     $html .= '<tr><th>Fat</th><th>SNF 8.3</th><th>SNF 8.4</th><th>SNF 8.5</th><th>SNF 8.6</th><th>SNF 8.7</th><th>SNF 8.8</th><th>SNF 8.9</th><th>SNF 9.0</th></tr>';
 
