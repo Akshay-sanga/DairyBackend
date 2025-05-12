@@ -125,7 +125,7 @@ public function importFile(Request $request)
     $file = $request->file('file');
     $extension = $file->getClientOriginalExtension();
 
-    // ✅ पहले पुराना data delete करें
+   
     MilkRate::truncate();
 
     if (in_array($extension, ['xlsx', 'xls', 'csv'])) {
