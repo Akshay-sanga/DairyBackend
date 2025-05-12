@@ -10,3 +10,4 @@ Route::get('/user', function (Request $request) {
 
 // Admin API Routes
 Route::post('/create-admin', [AdminController::class, 'create']);
+Route::post('/login-admin', [AdminController::class, 'login']);

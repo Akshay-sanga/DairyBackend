@@ -44,10 +44,37 @@ class AdminController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        //
+    public function login(Request $request)
+{
+    $email = $request->input('email');
+    $password = $request->input('password');
+
+    $admin = Admin::where('email', $email)->first();
+
+    if (!$admin) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Invalid email or password'
+        ], 401);
     }
+
+    if (!Hash::check($password, $admin->password)) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Invalid email or password'
+        ], 401);
+    }
+
+    // ✅ If you want to generate token (optional):
+    $token = $admin->createToken('API Token')->plainTextToken;
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Login successful',
+        'admin' => $admin,
+        'token' => $token
+    ]);
+}
 
     /**
      * Display the specified resource.
