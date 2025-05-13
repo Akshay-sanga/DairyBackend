@@ -5,6 +5,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MilkCollectionController;
 use App\Http\Controllers\MilkRateController;
 use App\Http\Controllers\SnfChartController;
+use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\ProductMasterController;
+use App\Http\Controllers\ProductStockController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +36,34 @@ Route::get('/all-milk-collection', [MilkCollectionController::class,'all']);
 Route::get('/edit-milk-collection/{id}', [MilkCollectionController::class,'edit']);
 Route::post('/update-milk-collection/{id}', [MilkCollectionController::class,'update']);
 Route::post('/delete-milk-collection/{id}', [MilkCollectionController::class,'delete']);
+
+
+///////////////////Product Category//////////////////////////////////
+
+Route::post('/product-category-submit', [ProductCategoryController::class,'submit']);
+Route::get('/all-product-category', [ProductCategoryController::class,'all']);
+Route::get('/edit-product-category/{id}', [ProductCategoryController::class,'edit']);
+Route::post('/update-product-category/{id}', [ProductCategoryController::class,'update']);
+Route::post('/delete-product-category/{id}', [ProductCategoryController::class,'delete']);
+
+///////////////////Product Master//////////////////////////////////
+
+Route::post('/product-submit', [ProductMasterController::class,'submit']);
+Route::get('/all-product', [ProductMasterController::class,'all']);
+Route::get('/edit-product/{id}', [ProductMasterController::class,'edit']);
+Route::post('/update-product/{id}', [ProductMasterController::class,'update']);
+Route::post('/delete-product/{id}', [ProductMasterController::class,'delete']);
+
+
+///////////////////Product Stock//////////////////////////////////
+
+Route::post('/product-stock-submit', [ProductStockController::class,'submit']);
+Route::get('/all-product-stock', [ProductStockController::class,'all']);
+Route::get('/edit-product-stock/{id}', [ProductStockController::class,'edit']);
+Route::post('/update-product-stock/{id}', [ProductStockController::class,'update']);
+Route::post('/delete-product-stock/{id}', [ProductStockController::class,'delete']);
+
+
 
 
 ///////////////////milk Rates//////////////////////////////////
