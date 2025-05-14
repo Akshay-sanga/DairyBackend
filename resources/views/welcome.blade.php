@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Dairy Project</title>
+        <title>Dairy Software</title>
         <link rel="icon" type="image/png" href="favicon.jpg">
 
         <!-- Fonts -->
