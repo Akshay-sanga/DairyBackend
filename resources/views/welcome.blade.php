@@ -55,7 +55,7 @@
     <body >
     <div class="card">
     <h1>सरस डेयरी में आपका स्वागत है</h1>
-    <p>&copy; 2025 Designed & Developed by Akshay & Shivam</p>
+    <p>&copy; 2025 Designed & Developed by Akshay & Shivam & Sunil</p>
   </div>
     </body>
 </html>
