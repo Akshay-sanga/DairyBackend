@@ -131,4 +131,36 @@ class ProductCategoryController extends Controller
         }
     }
 
+
+public function UpdateStatus(Request $request, $id)
+   {
+       try {
+           $category = ProductCategory::find($id);
+   
+           if (!$category) {
+               return response([
+                   "status_code" => 404,
+                   "message" => "category not found.",
+               ]);
+           }
+   
+           // Toggle status
+           $category->status = $category->status == '1' ? '0' : '1';
+           $category->save();
+   
+           return response([
+               "status_code" => 200,
+               "message" => "category status updated successfully.",
+               "status" => $category->status, 
+           ]);
+   
+       } catch (\Exception $e) {
+           return response()->json([
+               'status_code' => 500,
+               'message' => 'Something went wrong.',
+           ]);
+       }
+   }
+
+
 }

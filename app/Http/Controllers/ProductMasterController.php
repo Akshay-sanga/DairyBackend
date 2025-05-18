@@ -151,6 +151,34 @@ class ProductMasterController extends Controller
 
     }
 
-
+public function UpdateStatus(Request $request, $id)
+   {
+       try {
+           $product = ProductMaster::find($id);
+   
+           if (!$product) {
+               return response([
+                   "status_code" => 404,
+                   "message" => "product not found.",
+               ]);
+           }
+   
+           // Toggle status
+           $product->status = $product->status == '1' ? '0' : '1';
+           $product->save();
+   
+           return response([
+               "status_code" => 200,
+               "message" => "product status updated successfully.",
+               "status" => $product->status, 
+           ]);
+   
+       } catch (\Exception $e) {
+           return response()->json([
+               'status_code' => 500,
+               'message' => 'Something went wrong.',
+           ]);
+       }
+   }
 
 }

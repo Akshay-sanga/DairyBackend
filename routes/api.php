@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 
 // Admin API Routes
 Route::post('/create-admin', [AdminController::class, 'create']);
+Route::post('/verify-otp', [AdminController::class, 'verifyOtp']);
+
 Route::post('/login-admin', [AdminController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -46,6 +48,7 @@ Route::get('/all-product-category', [ProductCategoryController::class,'all']);
 Route::get('/edit-product-category/{id}', [ProductCategoryController::class,'edit']);
 Route::post('/update-product-category/{id}', [ProductCategoryController::class,'update']);
 Route::post('/delete-product-category/{id}', [ProductCategoryController::class,'delete']);
+Route::post('/update-status-category/{id}', [ProductCategoryController::class,'UpdateStatus']);
 
 ///////////////////Product Master//////////////////////////////////
 
@@ -54,7 +57,7 @@ Route::get('/all-product', [ProductMasterController::class,'all']);
 Route::get('/edit-product/{id}', [ProductMasterController::class,'edit']);
 Route::post('/update-product/{id}', [ProductMasterController::class,'update']);
 Route::post('/delete-product/{id}', [ProductMasterController::class,'delete']);
-
+Route::post('/update-status-product/{id}', [ProductMasterController::class,'UpdateStatus']);
 
 ///////////////////Product Stock//////////////////////////////////
 
@@ -63,6 +66,7 @@ Route::get('/all-product-stock', [ProductStockController::class,'all']);
 Route::get('/edit-product-stock/{id}', [ProductStockController::class,'edit']);
 Route::post('/update-product-stock/{id}', [ProductStockController::class,'update']);
 Route::post('/delete-product-stock/{id}', [ProductStockController::class,'delete']);
+Route::post('/update-status-product-stock/{id}', [ProductStockController::class,'UpdateStatus']);
 
 
 

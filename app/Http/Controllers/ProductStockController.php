@@ -201,7 +201,35 @@ public function delete(Request $request,$id)
 
 
 
-
+public function UpdateStatus(Request $request, $id)
+   {
+       try {
+           $product = ProductStock::find($id);
+   
+           if (!$product) {
+               return response([
+                   "status_code" => 404,
+                   "message" => "product stock not found.",
+               ]);
+           }
+   
+           // Toggle status
+           $product->status = $product->status == '1' ? '0' : '1';
+           $product->save();
+   
+           return response([
+               "status_code" => 200,
+               "message" => "product stock status updated successfully.",
+               "status" => $product->status, 
+           ]);
+   
+       } catch (\Exception $e) {
+           return response()->json([
+               'status_code' => 500,
+               'message' => 'Something went wrong.',
+           ]);
+       }
+   }
 
 
 

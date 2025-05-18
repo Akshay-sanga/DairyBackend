@@ -3,10 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Otp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendOtpMail;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -17,7 +22,8 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:admins,email',
-            'password' => 'required|string|min:6|confirmed',
+            'mobile' => 'required|unique:admins,mobile|digits:10',
+            'password' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -26,20 +32,70 @@ class AdminController extends Controller
                 'errors' => $validator->errors(),
             ], 422);
         }
+        try{
+            $email=$request->email;
 
-        // 🔹 Create admin
-        $admin = Admin::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+         $otp = rand(100000, 999999);
+           $model = Otp::updateOrCreate(
+            ['email' => $email],
+            ['otp' => $otp]
+        );
+         Mail::to($email)->send(new SendOtpMail($otp));
 
         return response()->json([
-            'status' => true,
-            'message' => 'Admin created successfully.',
-            'admin' => $admin,
+            'status_code' => '200',
+            'message' => 'Otp Send to Your Email Address successfully.',
         ]);
+          }
+     catch (\Exception $e) {
+            return response()->json(['message' => 'Something Went Wrong.', 'error' => $e->getMessage()], 500);
+        }
     }
+
+
+     public function verifyOtp(Request $request)
+    {
+        $request->validate([
+             'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:admins,email',
+            'mobile' => 'required|unique:admins,mobile|digits:10',
+            'password' => 'required',
+        ]);
+        try{
+
+        $otp = Otp::where('email', $request->email)->first();
+
+        if (!$otp || $otp->otp !== $request->otp) {
+            return response()->json(['message' => 'Invalid OTP'], 400);
+        }
+
+        if($otp->otp == $request->otp)
+        {
+            $admin=Admin::create([
+                'name'=>$request->name,
+                'email'=>$request->email,
+                'mobile'=>$request->mobile,
+                'password'=>Hash::make($request->password)
+            ]);
+            $otp->delete();
+            return response()->json([
+                'status_code'=>'200',
+                'message' => 'Otp verified successfully'
+            ]);
+        }
+    }
+     catch (\Exception $e) {
+            return response()->json(['message' => 'Something Went Wrong.', 'error' => $e->getMessage()], 500);
+        }
+
+    }
+
+
+
+
+
+
+
 
 
     /**
