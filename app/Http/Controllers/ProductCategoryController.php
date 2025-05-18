@@ -24,7 +24,9 @@ class ProductCategoryController extends Controller
     }
 
     try{
+        $adminId=auth()->user()->id;
         $model = new ProductCategory();
+        $model->admin_id=$adminId;
         $model->name=$request->name;
         $model->status='1';
         $model->save();
@@ -45,7 +47,8 @@ class ProductCategoryController extends Controller
    public function all()
    {
     try{
-        $data = ProductCategory::where('status','1')->orderBy('id','desc')->get();
+        $adminId=auth()->user()->id;
+        $data = ProductCategory::where('admin_id',$adminId)->orderBy('id','desc')->get();
         return response()->json([
             'status_code' =>'200',
             'response' =>'success',

@@ -25,7 +25,9 @@ class ProductMasterController extends Controller
         ]);
     }
     try{
+        $adminId=auth()->user()->id;
         $model=new ProductMaster();
+        $model->admin_id=$adminId;
         $model->category_id=$request->category_id;
         $model->name=$request->name;
         $model->unit=$request->unit;
@@ -50,7 +52,8 @@ class ProductMasterController extends Controller
     public function all()
     {
         try{
-            $data = ProductMaster::with(['category', 'stocks'])->orderBy('id', 'desc')->get();
+            $adminId=auth()->user()->id;
+            $data = ProductMaster::with(['category', 'stocks'])->where('admin_id',$adminId)->orderBy('id', 'desc')->get();
 
             return response()->json([
                 'status_code'=>'200',

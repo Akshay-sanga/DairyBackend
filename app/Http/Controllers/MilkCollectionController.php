@@ -30,9 +30,10 @@ class MilkCollectionController extends Controller
         }
     
         try {
-           
+           $adminId=auth()->user()->id;
     
             $model = new MilkCollection();
+            $model->admin_id=$adminId;
             $model->customer_account_number = $request->customer_account_number;
             $model->milk_type = $request->milk_type;
             $model->quantity = $request->quantity;
@@ -64,7 +65,8 @@ class MilkCollectionController extends Controller
    public function all()
    {
        try {
-           $data = MilkCollection::paginate(10); // remove ->all()
+        $adminId=auth()->user()->id;
+           $data = MilkCollection::where('admin_id',$adminId)->paginate(10); // remove ->all()
            return response([
                "status_code" => "200",
                "message" => "All Milk Collection Data Fetched Successfully",

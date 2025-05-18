@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 Route::post('/create-admin', [AdminController::class, 'create']);
 Route::post('/verify-otp', [AdminController::class, 'verifyOtp']);
 
+Route::post('/send-otp-forget-password', [AdminController::class, 'SendForgetOtp']);
+Route::post('/forget-password', [AdminController::class, 'ForgetPassword']);
+
 Route::post('/login-admin', [AdminController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () {

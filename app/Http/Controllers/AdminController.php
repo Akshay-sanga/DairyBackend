@@ -60,6 +60,7 @@ class AdminController extends Controller
             'email' => 'required|email|unique:admins,email',
             'mobile' => 'required|unique:admins,mobile|digits:10',
             'password' => 'required',
+            'otp' => 'required',
         ]);
         try{
 
@@ -93,10 +94,94 @@ class AdminController extends Controller
 
 
 
+      public function SendForgetOtp(Request $request)
+    {
+
+        // 🔹 Validation
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+        try{
+            $email=$request->email;
+            $admin = Admin::where('email',$email)->first();
+            if(!$admin)
+            {
+                return response->json([
+                    'status_code'=>'404',
+                    'message'=>'Admin Email NOt Found'
+                ]);
+            }
+            
+         $otp = rand(100000, 999999);
+           $model = Otp::updateOrCreate(
+            ['email' => $email],
+            ['otp' => $otp]
+        );
+         Mail::to($email)->send(new SendOtpMail($otp));
+
+        return response()->json([
+            'status_code' => '200',
+            'message' => 'Otp Send to Your Email Address successfully.',
+        ]);
+          }
+     catch (\Exception $e) {
+            return response()->json(['message' => 'Something Went Wrong.', 'error' => $e->getMessage()], 500);
+        }
+    }
 
 
+ public function ForgetPassword(Request $request)
+    {
+        $request->validate([
+        
+            'email' => 'required',
+            'otp'=>'required',
+            'password'=>'required',
+             'confirm_password' => 'required|same:password',
+           
+        ]);
+        try{
 
+        $otp = Otp::where('email', $request->email)->first();
 
+        if (!$otp || $otp->otp !== $request->otp) {
+            return response()->json(['message' => 'Invalid OTP'], 400);
+        }
+
+        if($otp->otp == $request->otp)
+        {
+            $admin = Admin::where('email',$request->email)->first();
+            if(!$admin)
+            {
+                return response()->
+                json([
+                    'status_code'=>'404',
+                    'message'=>'Admin Email NOt Found'
+                    ]);
+                    }
+                    $admin->
+                    update([
+                        'password'=>Hash::make($request->password),
+                        ]);
+            $otp->delete();
+            return response()->json([
+                'status_code'=>'200',
+                'message' => 'Password Forget successfully'
+            ]);
+        }
+    }
+     catch (\Exception $e) {
+            return response()->json(['message' => 'Something Went Wrong.', 'error' => $e->getMessage()], 500);
+        }
+
+    }
 
     /**
      * Store a newly created resource in storage.

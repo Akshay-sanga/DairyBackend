@@ -53,8 +53,10 @@ class ProductStockController extends Controller
                 'response' => 'success',
             ]);
         } else {
+            $adminId=auth()->user()->id;
             // Create new stock entry
             $model = new ProductStock();
+            $model->admin_id=$adminId;
             $model->product_id = $request->product_id;
             $model->stock_type = $request->stock_type;
             $model->quantity = $request->quantity;
@@ -80,7 +82,8 @@ class ProductStockController extends Controller
     public function all()
     {
         try{
-            $data = ProductStock::with('product')->orderBy('id', 'desc')->get();
+            $adminId=auth()->user()->id;
+            $data = ProductStock::with('product')->where('admin_id',$adminId)->orderBy('id', 'desc')->get();
             return response()->json([
                 'status_code'=>'200',
                 'response'=>'success',

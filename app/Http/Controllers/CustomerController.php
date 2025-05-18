@@ -29,11 +29,14 @@ class CustomerController extends Controller
         }
     
         try {
+            $adminId=auth()->user()->id;
+           
             // Get last customer's account number
             $lastCustomer = Customer::orderBy('account_number', 'desc')->first();
             $account_number = $lastCustomer ? $lastCustomer->account_number + 1 : 1;
     
             $model = new Customer();
+            $model->admin_id = $adminId;
             $model->account_number = $account_number;
             $model->name = $request->name;
             $model->mobile = $request->mobile;
@@ -67,7 +70,8 @@ class CustomerController extends Controller
    public function all()
    {
        try {
-           $data = Customer::paginate(10); // remove ->all()
+        $adminId=auth()->user()->id;
+           $data = Customer::where('admin_id',$adminId)->paginate(10);
            return response([
                "status_code" => "200",
                "message" => "All Customers Data Fetched Successfully",
