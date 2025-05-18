@@ -17,18 +17,42 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class MilkRateController extends Controller
 {
+    // public function index()
+    // {
+    //     try {
+
+    //         return response()->json(MilkRate::all());
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             "status_code" => "500",
+    //             "message" => "Something Went Wrong!"
+    //         ]);
+    //     }
+    // }
+
     public function index()
     {
-        try {
+        $rates = MilkRate::all();
 
-            return response()->json(MilkRate::all());
-        } catch (\Exception $e) {
-            return response()->json([
-                "status_code" => "500",
-                "message" => "Something Went Wrong!"
-            ]);
-        }
+        $transformedRates = $rates->map(function ($item) {
+            $data = [
+                'fat' => $item->fat,
+            ];
+
+            foreach ($item->getAttributes() as $key => $value) {
+                if (str_starts_with($key, 'snf_')) {
+                    $data[$key] = $value;
+                }
+            }
+
+            return $data;
+        });
+
+        return response()->json([
+            'data' => $transformedRates,
+        ]);
     }
+
 
     public function store(Request $request)
     {
@@ -58,18 +82,19 @@ class MilkRateController extends Controller
             $data = ['fat' => $fat];
 
             foreach ($snfRates as $snfRate) {
-                $key = 'snf_' . str_replace('.', '_', (string)$snfRate['snf']);
+                $snf = number_format((float)($snfRate['snf'] ?? 0), 1);
+                $key = 'snf_' . str_replace('.', '_', $snf);
                 $rate = $snfRate['rate'] ?? null;
 
-                // Assign numeric or null
-                $data[$key] = is_numeric($rate) ? $rate : null;
+                $data[$key] = is_numeric(trim($rate)) ? (float)trim($rate) : null;
             }
 
             MilkRate::create($data);
         }
 
         return response()->json([
-            'message' => 'All rates saved successfully.'
+            'message' => 'All rates saved successfully.',
+            'data' => MilkRate::all()  // <-- Send full table
         ], 201);
     }
 
