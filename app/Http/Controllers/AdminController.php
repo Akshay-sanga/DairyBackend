@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use App\Models\Otp;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth; 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
@@ -236,27 +237,10 @@ class AdminController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Admin $admin)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Admin $admin)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Admin $admin)
-    {
-        //
-    }
+    public function logout()
+{
+ Auth::user()->tokens()->delete();
+    $response = ["Message" => "Logout Successfully"];
+    return response($response);
+}
 }

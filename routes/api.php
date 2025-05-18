@@ -9,6 +9,8 @@ use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductMasterController;
 use App\Http\Controllers\ProductStockController;
 use App\Http\Controllers\SnfFormulaController;
+use App\Http\Controllers\DailyMilkSaleController;
+use App\Http\Controllers\MilkDispatchController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -71,6 +73,22 @@ Route::post('/update-product-stock/{id}', [ProductStockController::class,'update
 Route::post('/delete-product-stock/{id}', [ProductStockController::class,'delete']);
 Route::post('/update-status-product-stock/{id}', [ProductStockController::class,'UpdateStatus']);
 
+///////////////////Daily Milk Sale//////////////////////////////////
+
+Route::post('/daily-milk-sale-submit', [DailyMilkSaleController::class,'submit']);
+Route::get('/all-daily-milk-sale', [DailyMilkSaleController::class,'all']);
+Route::get('/edit-daily-milk-sale/{id}', [DailyMilkSaleController::class,'edit']);
+Route::post('/update-daily-milk-sale/{id}', [DailyMilkSaleController::class,'update']);
+Route::post('/delete-daily-milk-sale/{id}', [DailyMilkSaleController::class,'delete']);
+
+///////////////////Milk Dispatch//////////////////////////////////
+
+Route::post('/milk-dispatch-submit', [MilkDispatchController::class,'submit']);
+Route::get('/all-milk-dispatch', [MilkDispatchController::class,'all']);
+Route::get('/edit-milk-dispatch/{id}', [MilkDispatchController::class,'edit']);
+Route::post('/update-milk-dispatch/{id}', [MilkDispatchController::class,'update']);
+Route::post('/delete-milk-dispatch/{id}', [MilkDispatchController::class,'delete']);
+
 
 
 
@@ -97,4 +115,6 @@ Route::post('/snf-formula/save', [SnfFormulaController::class, 'store']);
 Route::get('/snf-formula/latest', [SnfFormulaController::class, 'getLatest']);
 
 
+///////////////////////////Logout///////////////////////////////////////////////////////
+Route::post('/logout', [AdminController::class,'logout']);
 });
