@@ -8,6 +8,7 @@ use App\Http\Controllers\SnfChartController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductMasterController;
 use App\Http\Controllers\ProductStockController;
+use App\Http\Controllers\SnfFormulaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -79,8 +80,14 @@ Route::get('/export-demo-both', [MilkRateController::class, 'exportDemoBoth']);
 
 
 
-//////////////////////snf chart/////////////////////////////////////////////////
+//////////////////////SNF Chart/////////////////////////////////////////////////
 
 Route::post('/snf-chart/save', [SnfChartController::class, 'store']);
+
+//////////////////////SNF FORMULA/////////////////////////////////////////////////
+
+Route::post('/snf-formula/save', [SnfFormulaController::class, 'store']);
+Route::get('/snf-formula/latest', [SnfFormulaController::class, 'getLatest']);
+
 
 });
