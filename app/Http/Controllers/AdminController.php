@@ -16,42 +16,51 @@ use Carbon\Carbon;
 
 class AdminController extends Controller
 {
-    public function create(Request $request)
-    {
+ public function create(Request $request)
+{
+    // 🔹 Validation
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:admins,email',
+        'mobile' => 'required|unique:admins,mobile|digits:10',
+        'password' => 'required',
+    ]);
 
-        // 🔹 Validation
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:admins,email',
-            'mobile' => 'required|unique:admins,mobile|digits:10',
-            'password' => 'required',
-        ]);
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => false,
+            'errors' => $validator->errors(),
+        ], 422);
+    }
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-        try{
-            $email=$request->email;
+    try {
+        $email = $request->email;
+        $otp = rand(100000, 999999);
 
-         $otp = rand(100000, 999999);
-           $model = Otp::updateOrCreate(
+        // 🔹 Save OTP with expiration (10 minutes from now)
+        $model = Otp::updateOrCreate(
             ['email' => $email],
-            ['otp' => $otp]
+            [
+                'otp' => $otp,
+                'expires_at' => now()->addMinutes(10), // Add this field to the 'otps' table
+            ]
         );
-         Mail::to($email)->send(new SendOtpMail($otp));
+
+        // 🔹 Send OTP via mail
+        Mail::to($email)->send(new SendOtpMail($otp));
 
         return response()->json([
-            'status_code' => '200',
-            'message' => 'Otp Send to Your Email Address successfully.',
+            'status_code' => 200,
+            'message' => 'Otp sent to your email address successfully.',
         ]);
-          }
-     catch (\Exception $e) {
-            return response()->json(['message' => 'Something Went Wrong.', 'error' => $e->getMessage()], 500);
-        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Something Went Wrong.',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
+
 
 
      public function verifyOtp(Request $request)
@@ -68,7 +77,9 @@ class AdminController extends Controller
         $otp = Otp::where('email', $request->email)->first();
 
         if (!$otp || $otp->otp !== $request->otp) {
-            return response()->json(['message' => 'Invalid OTP'], 400);
+            return response()->json([
+                'status_code'=>'400',
+                'message' => 'Invalid OTP'], 400);
         }
 
         if($otp->otp == $request->otp)
@@ -82,7 +93,7 @@ class AdminController extends Controller
             $otp->delete();
             return response()->json([
                 'status_code'=>'200',
-                'message' => 'Otp verified successfully'
+                'message' => 'Otp verified successfully and User Registered.'
             ]);
         }
     }
