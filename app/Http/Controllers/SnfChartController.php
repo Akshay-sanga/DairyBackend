@@ -18,7 +18,9 @@ public function store(Request $request)
     $data = $request->input('data');
 
     if (!is_array($data)) {
-        return response()->json(['error' => 'Invalid data format. "data" must be an array.'], 400);
+        return response()->json([
+             "status_code" => "400",
+            'error' => 'Invalid data format. "data" must be an array.'], 400);
     }
 
     foreach ($data as $row) {
@@ -38,7 +40,9 @@ public function store(Request $request)
         );
     }
 
-    return response()->json(['message' => 'SNF Chart updated successfully.']);
+    return response()->json([
+         "status_code" => "200",
+        'message' => 'SNF Chart updated successfully.']);
 }
 
 }

@@ -49,6 +49,7 @@ class MilkRateController extends Controller
         });
 
         return response()->json([
+            "status_code" => "200",
             'data' => $transformedRates,
         ]);
     }
@@ -93,6 +94,7 @@ class MilkRateController extends Controller
         }
 
         return response()->json([
+            "status_code" => "200",
             'message' => 'All rates saved successfully.',
             'data' => MilkRate::all()  // <-- Send full table
         ], 201);
@@ -102,7 +104,12 @@ class MilkRateController extends Controller
     {
         try {
 
-            return response()->json(MilkRate::findOrFail($id));
+            return response()->json(
+                [
+                    "status_code" => "200",
+                    MilkRate::findOrFail($id)
+                ]
+            );
         } catch (\Exception $e) {
             return response()->json([
                 "status_code" => "500",
@@ -116,7 +123,12 @@ class MilkRateController extends Controller
         try {
             $milkRate = MilkRate::findOrFail($id);
             $milkRate->update($request->all());
-            return response()->json($milkRate);
+            return response()->json(
+                [
+                    "status_code" => "200",
+                    $milkRate
+                ]
+                );
         } catch (\Exception $e) {
             return response()->json([
                 "status_code" => "500",
@@ -130,7 +142,9 @@ class MilkRateController extends Controller
         try {
             $milkRate = MilkRate::findOrFail($id);
             $milkRate->delete();
-            return response()->json(['message' => 'Deleted successfully']);
+            return response()->json([
+                 "status_code" => "200",
+                'message' => 'Deleted successfully']);
         } catch (\Exception $e) {
             return response()->json([
                 "status_code" => "500",

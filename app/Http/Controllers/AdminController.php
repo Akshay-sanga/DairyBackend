@@ -116,7 +116,7 @@ class AdminController extends Controller
             {
                 return response->json([
                     'status_code'=>'404',
-                    'message'=>'Admin Email NOt Found'
+                    'message'=>'Admin Email Not Found'
                 ]);
             }
             
@@ -164,7 +164,7 @@ class AdminController extends Controller
                 return response()->
                 json([
                     'status_code'=>'404',
-                    'message'=>'Admin Email NOt Found'
+                    'message'=>'Admin Email Not Found'
                     ]);
                     }
                     $admin->
@@ -197,14 +197,14 @@ class AdminController extends Controller
 
         if (!$admin) {
             return response()->json([
-                'status' => false,
+                'status_code' => 401,
                 'message' => 'Invalid email or password'
             ], 401);
         }
 
         if (!Hash::check($password, $admin->password)) {
             return response()->json([
-                'status' => false,
+                'status_code' => 401,
                 'message' => 'Invalid email or password'
             ], 401);
         }
@@ -213,7 +213,7 @@ class AdminController extends Controller
         $token = $admin->createToken('API Token')->plainTextToken;
 
         return response()->json([
-            'status' => true,
+            'status_code' => 200,
             'message' => 'Login successful',
             'admin' => $admin,
             'token' => $token
@@ -240,7 +240,9 @@ class AdminController extends Controller
     public function logout()
 {
  Auth::user()->tokens()->delete();
-    $response = ["Message" => "Logout Successfully"];
+    $response = [
+        "status_code" => 200,
+        "Message" => "Logout Successfully"];
     return response($response);
 }
 }
