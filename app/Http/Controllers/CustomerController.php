@@ -6,6 +6,7 @@ use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Collection;
+use Paginate;
 class CustomerController extends Controller
 {
     public function submit(Request $request)
@@ -215,6 +216,59 @@ class CustomerController extends Controller
            ]);
        }
     }
+    
+    
+    
+public function FetchCustomerDetail(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        "account_number" => "required",
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            "status_code" => 422,
+            "message" => $validator->errors()->first()
+        ]);
+    }
+
+    try {
+        $account_number = $request->account_number;
+        $adminId = auth()->user()->id;
+
+        $customer = Customer::where('admin_id', $adminId)
+            ->where('account_number', $account_number)
+            ->first();
+
+        if (!$customer) {
+            return response()->json([
+                "status_code" => 404,
+                "message" => "Customer not found"
+            ]);
+        }
+
+        if ($customer->status != '1') {
+            return response()->json([
+                "status_code" => 403,
+                "message" => "Customer is not active"
+            ]);
+        }
+
+        return response()->json([
+            "status_code" => 200,
+            "message" => "Customer data fetched successfully",
+            "data" => $customer
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status_code' => 500,
+            'message' => 'Something went wrong',
+            // 'error' => $e->getMessage() // for debugging if needed
+        ]);
+    }
+}
+
    
 
 

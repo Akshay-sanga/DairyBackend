@@ -12,6 +12,7 @@ class MilkCollectionController extends Controller
     {
         $validator = Validator::make($request->all(), [
             "customer_account_number" => "required",
+            "shift" => "required",
             "milk_type" => "required",
             "quantity" => "required",
             "clr" => "required",
@@ -35,6 +36,7 @@ class MilkCollectionController extends Controller
             $model = new MilkCollection();
             $model->admin_id=$adminId;
             $model->customer_account_number = $request->customer_account_number;
+            $model->shift = $request->shift;
             $model->milk_type = $request->milk_type;
             $model->quantity = $request->quantity;
             $model->clr = $request->clr;
@@ -127,6 +129,7 @@ class MilkCollectionController extends Controller
    {
        $validator = Validator::make($request->all(), [
         "customer_account_number" => "required",
+        "shift" => "required",
         "milk_type" => "required",
         "quantity" => "required",
         "clr" => "required",
@@ -151,6 +154,7 @@ class MilkCollectionController extends Controller
            $model = [
                'customer_account_number' => $request->customer_account_number,
                'milk_type' => $request->milk_type,
+               'shift' => $request->shift,
                'quantity' => $request->quantity,
                'clr' => $request->clr,
                'fat' => $request->fat,

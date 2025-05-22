@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Paginate;
 
 class ProductCategoryController extends Controller
 {
@@ -48,7 +49,7 @@ class ProductCategoryController extends Controller
    {
     try{
         $adminId=auth()->user()->id;
-        $data = ProductCategory::where('admin_id',$adminId)->orderBy('id','desc')->get();
+        $data = ProductCategory::where('admin_id',$adminId)->orderBy('id','desc')->paginate(10);
         return response()->json([
             'status_code' =>'200',
             'response' =>'success',

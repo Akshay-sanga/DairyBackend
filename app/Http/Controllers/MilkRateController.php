@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use App\Exports\MilkRatesExport;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Str;
 
 
 
@@ -116,7 +117,8 @@ public function store(Request $request)
         ]);
     }
 
-    $adminId = auth()->user()->id;
+     $adminId=auth()->user()->id;
+    //  return $adminId;
 
     // ❗ Check if data exists for this admin, then delete old
     $existingData = MilkRate::where('admin_id', $adminId)->exists();
@@ -458,6 +460,245 @@ public function exportDemoBoth()
         'zip_path' => asset('storage/temp_export/' . $zipFileName)
     ]);
 }
+
+
+
+// public function FetchRate(Request $request)
+// {
+//     $validator = Validator::make($request->all(), [
+//         'fat' => 'required',
+//         'clr' => 'nullable|required_without:snf',
+//         'snf' => 'nullable|required_without:clr',
+//     ]);
+
+//     if ($validator->fails()) {
+//         return response()->json(['error' => $validator->errors()], 400);
+//     }
+
+//     try {
+//         $adminId = auth()->user()->id;
+//         $fat = $request->fat;
+//         $snf = $request->snf;
+//         $clr = $request->clr;
+
+//         // Case 1: fat + snf given → fetch CLR from snf_chart
+//         if ($fat && $snf && !$clr) {
+//             $snfChartRow = \DB::table('snf_chart')
+//                 ->where('admin_id', $adminId)
+//                 ->where('fat', $fat)
+//                 ->first();
+
+//             if ($snfChartRow) {
+//                 // Search matching SNF to find corresponding CLR column
+//                 foreach ($snfChartRow as $column => $value) {
+//                     if (Str::startsWith($column, 'clr_') && $value == $snf) {
+//                         $clr = str_replace('clr_', '', $column); // e.g. "25"
+//                         break;
+//                     }
+//                 }
+//             }
+
+//             if (!$clr) {
+//                 return response()->json(['error' => 'CLR not found for given FAT and SNF'], 404);
+//             }
+//         }
+
+//         // Case 2: fat + clr → get SNF from snf_chart
+//         if (!$snf && $clr) {
+//             $clrColumn = 'clr_' . str_replace('.', '', $clr);
+
+//             if (!\Schema::hasColumn('snf_chart', $clrColumn)) {
+//                 return response()->json(['error' => 'Invalid CLR value'], 400);
+//             }
+
+//             $snfRow = \DB::table('snf_chart')
+//                 ->where('admin_id', $adminId)
+//                 ->where('fat', $fat)
+//                 ->select($clrColumn)
+//                 ->first();
+
+//             if (!$snfRow || !$snfRow->$clrColumn) {
+//                 return response()->json(['error' => 'SNF not found for given FAT and CLR'], 404);
+//             }
+
+//             $snf = $snfRow->$clrColumn;
+//         }
+
+//         // Step 3: Now fetch rate from milk_rates table using fat + snf
+//         $snfColumn = 'snf_' . str_replace('.', '_', $snf);
+
+//         if (!\Schema::hasColumn('milk_rates', $snfColumn)) {
+//             return response()->json(['error' => 'Invalid SNF value'], 400);
+//         }
+
+//         $rateRow = \DB::table('milk_rates')
+//             ->where('admin_id', $adminId)
+//             ->where('fat', $fat)
+//             ->select('id', 'fat', $snfColumn)
+//             ->first();
+
+//         if (!$rateRow) {
+//             return response()->json(['error' => 'Rate not found for given FAT and SNF'], 404);
+//         }
+
+//         return response()->json([
+//             'status_code' => '200',
+//             'fat' => $fat,
+//             'snf' => $snf,
+//             'clr' => $clr, // optionally include if found
+//             'rate' => $rateRow->$snfColumn,
+//         ]);
+
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'status_code' => 500,
+//             'message' => 'Something went wrong',
+//             'error' => $e->getMessage(),
+//         ]);
+//     }
+// }
+
+
+
+
+
+public function FetchRate(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'fat' => 'required',
+        'clr' => 'nullable|required_without:snf',
+        'snf' => 'nullable|required_without:clr',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['error' => $validator->errors()], 400);
+    }
+
+    try {
+        $adminId = auth()->user()->id;
+        $fat = $request->fat;
+        $snf = $request->snf;
+        $clr = $request->clr;
+
+        // Case 1: fat + snf given → fetch CLR from snf_chart
+        if ($fat && $snf && !$clr) {
+            $snfChartRow = \DB::table('snf_chart')
+                ->where('admin_id', $adminId)
+                ->where('fat', $fat)
+                ->first();
+
+            if ($snfChartRow) {
+                // Search matching SNF to find corresponding CLR column
+                foreach ($snfChartRow as $column => $value) {
+                    if (Str::startsWith($column, 'clr_') && $value == $snf) {
+                        $clr = str_replace('clr_', '', $column); // e.g. "25"
+                        break;
+                    }
+                }
+            }
+
+            if (!$clr) {
+                return response()->json([
+                     'status_code' => 200,
+                    'fat' => $fat ?? '',
+                    'snf' => $snf ?? '',
+                    'clr' => '',
+                    'rate' => '',
+                    'error' => 'CLR not found for given FAT and SNF'
+                ],);
+            }
+        }
+
+        // Case 2: fat + clr → get SNF from snf_chart
+        if (!$snf && $clr) {
+            $clrColumn = 'clr_' . str_replace('.', '', $clr);
+
+            if (!\Schema::hasColumn('snf_chart', $clrColumn)) {
+                return response()->json([
+                     'status_code' => 200,
+                    'fat' => $fat ?? '',
+                    'snf' => '',
+                    'clr' => $clr ?? '',
+                    'rate' => '',
+                    // 'error' => 'Invalid CLR value'
+                ],);
+            }
+
+            $snfRow = \DB::table('snf_chart')
+                ->where('admin_id', $adminId)
+                ->where('fat', $fat)
+                ->select($clrColumn)
+                ->first();
+
+            if (!$snfRow || !$snfRow->$clrColumn) {
+                return response()->json([
+                     'status_code' => 200,
+                    'fat' => $fat ?? '',
+                    'snf' => '',
+                    'clr' => $clr ?? '',
+                    'rate' => '',
+                    // 'error' => 'SNF not found for given FAT and CLR'
+                ],);
+            }
+
+            $snf = $snfRow->$clrColumn;
+        }
+
+        // Step 3: Now fetch rate from milk_rates table using fat + snf
+        $snfColumn = 'snf_' . str_replace('.', '_', $snf);
+
+        if (!\Schema::hasColumn('milk_rates', $snfColumn)) {
+            return response()->json([
+                 'status_code' => 200,
+                'fat' => $fat ?? '',
+                'snf' => $snf ?? '',
+                'clr' => $clr ?? '',
+                'rate' => '',
+                // 'error' => 'Invalid SNF value'
+            ],);
+        }
+
+        $rateRow = \DB::table('milk_rates')
+            ->where('admin_id', $adminId)
+            ->where('fat', $fat)
+            ->select('id', 'fat', $snfColumn)
+            ->first();
+
+        if (!$rateRow) {
+            return response()->json([
+                 'status_code' => 200,
+                'fat' => $fat ?? '',
+                'snf' => $snf ?? '',
+                'clr' => $clr ?? '',
+                'rate' => '',
+                // 'error' => 'Rate not found for given FAT and SNF'
+            ],);
+        }
+
+        return response()->json([
+            'status_code' => 200,
+            'fat' => $fat ?? '',
+            'snf' => $snf ?? '',
+            'clr' => $clr ?? '',
+            'rate' => $rateRow->$snfColumn ?? '',
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status_code' => 500,
+            'fat' => $fat ?? '',
+            'snf' => $snf ?? '',
+            'clr' => $clr ?? '',
+            'rate' => '',
+            'message' => 'Something went wrong',
+            'error' => $e->getMessage(),
+        ]);
+    }
+}
+
+
+
+
 
 
 

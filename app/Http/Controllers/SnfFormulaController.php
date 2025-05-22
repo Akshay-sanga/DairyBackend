@@ -63,14 +63,7 @@ class SnfFormulaController extends Controller
                 ->latest()
                 ->first();
 
-    if (!$formula) {
-        return response()->json([
-            'status_code' => 404,
-            'message' => 'No SNF formula found.',
-            'data' => new \stdClass()
-        ]);
-    }
-
+   
     return response()->json([
         'status_code' => 200,
         'message' => 'Latest SNF formula retrieved.',

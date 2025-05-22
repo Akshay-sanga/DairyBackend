@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProductStock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Paginate;
 class ProductStockController extends Controller
 {
     public function submit(Request $request)
@@ -83,7 +84,7 @@ class ProductStockController extends Controller
     {
         try{
             $adminId=auth()->user()->id;
-            $data = ProductStock::with('product')->where('admin_id',$adminId)->orderBy('id', 'desc')->get();
+            $data = ProductStock::with('product')->where('admin_id',$adminId)->orderBy('id', 'desc')->paginate(10);
             return response()->json([
                 'status_code'=>'200',
                 'response'=>'success',

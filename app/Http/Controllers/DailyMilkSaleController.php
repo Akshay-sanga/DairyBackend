@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DailyMilkSale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Paginate;
 
 class DailyMilkSaleController extends Controller
 {
@@ -59,7 +60,7 @@ class DailyMilkSaleController extends Controller
    {
     try{
         $adminId=auth()->user()->id;
-        $data = DailyMilkSale::where('admin_id',$adminId)->orderBy('id','desc')->get();
+        $data = DailyMilkSale::where('admin_id',$adminId)->orderBy('id','desc')->paginate(10);
         return response()->json([
             'status_code' =>'200',
             'response' =>'success',

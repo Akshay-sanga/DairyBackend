@@ -136,6 +136,7 @@ class AdminController extends Controller
 
             return response()->json([
                 'status_code' => '200',
+                'otp'=>$otp,
                 'message' => 'Otp Send to Your Email Address successfully.',
             ]);
         } catch (\Exception $e) {

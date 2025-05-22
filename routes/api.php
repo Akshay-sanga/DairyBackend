@@ -37,6 +37,10 @@ Route::post('/update-customer/{id}', [CustomerController::class,'update']);
 Route::post('/delete-customer/{id}', [CustomerController::class,'delete']);
 Route::post('/update-status-customer/{id}', [CustomerController::class,'UpdateStatus']);
 
+
+//////////////////////////////fetch customer detail by account number /////////////////////////////////////////////
+Route::get('/fetch-cumstomer-detail-by-account-number', [CustomerController::class,'FetchCustomerDetail']);
+
 ///////////////////milk colletion//////////////////////////////////
 
 Route::post('/milk-collection-submit', [MilkCollectionController::class,'submit']);
@@ -104,6 +108,8 @@ Route::post('milk-rates/import', [MilkRateController::class, 'importFile']);
 Route::get('/export-demo-both', [MilkRateController::class, 'exportDemoBoth']);
 
 
+////////////////////////////////////fetch milk rate acoourding fat and clr/snf /////////////////////////////////////////////////
+Route::get('/milk-rate-fetch-by-fat-snf-clr', [MilkRateController::class,'FetchRate']);
 
 //////////////////////SNF Chart/////////////////////////////////////////////////
 

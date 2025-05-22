@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProductMaster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Paginate;
 class ProductMasterController extends Controller
 {
     public function submit(Request $request)
@@ -53,7 +54,7 @@ class ProductMasterController extends Controller
     {
         try{
             $adminId=auth()->user()->id;
-            $data = ProductMaster::with(['category', 'stocks'])->where('admin_id',$adminId)->orderBy('id', 'desc')->get();
+            $data = ProductMaster::with(['category', 'stocks'])->where('admin_id',$adminId)->orderBy('id', 'desc')->paginate(10);
 
             return response()->json([
                 'status_code'=>'200',

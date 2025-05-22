@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\MilkDispatch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Paginate;
 class MilkDispatchController extends Controller
 {
     public function submit(Request $request)
@@ -61,7 +62,7 @@ class MilkDispatchController extends Controller
    {
     try{
         $adminId=auth()->user()->id;
-        $data = MilkDispatch::where('admin_id',$adminId)->orderBy('id','desc')->get();
+        $data = MilkDispatch::where('admin_id',$adminId)->orderBy('id','desc')->paginate(10);
           foreach ($data as $item) {
             $item->milk_details = json_decode($item->milk_details);
         }

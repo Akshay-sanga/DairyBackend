@@ -7,13 +7,16 @@ use App\Models\SnfChart;
 
 class SnfChartController extends Controller
 {
+    
+    
 public function store(Request $request)
 {
     $request->validate([
         'data' => 'required|array',
     ]);
 
-    $adminId = auth()->user()->id;
+     $adminId=auth()->user()->id;
+    
     $data = $request->input('data');
 
     if (!is_array($data)) {
@@ -25,7 +28,8 @@ public function store(Request $request)
 
     foreach ($data as $row) {
         // Check if data exists for this admin_id
-        $existing = SnfChart::where('admin_id', $adminId)->first();
+        $existing = SnfChart::where('admin_id', $adminId)->where('fat', $row['fat'])->first();
+
 
         if ($existing) {
             // Update existing row
@@ -42,7 +46,6 @@ public function store(Request $request)
                 'clr_30' => $row['clr_30'],
             ]);
         } else {
-            // Create new row
             SnfChart::create([
                 'admin_id' => $adminId,
                 'fat' => $row['fat'],
@@ -61,7 +64,8 @@ public function store(Request $request)
 
     return response()->json([
         "status_code" => "200",
-        'message' => 'SNF Chart saved successfully.'
+        'message' => 'SNF Chart saved successfully.',
+        'data'=>$data
     ]);
 }
 
