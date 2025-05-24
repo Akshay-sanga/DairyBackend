@@ -20,6 +20,7 @@ class MilkCollectionController extends Controller
             "snf" => "required",
             "base_rate" => "required",
             "other_price" => "required",
+            "total_amount" => "required",
             "name" => "required",
             "spouse" => "required",
             "mobile" => "required",
@@ -44,6 +45,7 @@ class MilkCollectionController extends Controller
             $model->snf= $request->snf;
             $model->base_rate = $request->base_rate;
             $model->other_price= $request->other_price;
+            $model->total_amount= $request->total_amount;
             $model->name = $request->name;
             $model->spouse = $request->spouse;
             $model->mobile = $request->mobile;
@@ -137,6 +139,7 @@ class MilkCollectionController extends Controller
         "snf" => "required",
         "base_rate" => "required",
         "other_price" => "required",
+        "total_amount" => "required",
         "name" => "required",
         "spouse" => "required",
         "mobile" => "required",
@@ -161,6 +164,7 @@ class MilkCollectionController extends Controller
                'snf' => $request->snf,
                'base_rate' => $request->base_rate,
                'other_price' => $request->other_price,
+               'total_amount' => $request->total_amount,
                'name' => $request->name,
                'spouse' => $request->spouse,
                'mobile' => $request->mobile,
