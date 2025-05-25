@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MilkCollection;
+use App\Models\Customer;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
@@ -50,6 +51,16 @@ class MilkCollectionController extends Controller
             $model->spouse = $request->spouse;
             $model->mobile = $request->mobile;
             $model->save();
+
+            $customerAccountNumber  = $model->customer_account_number;
+
+           $customer = Customer::where('account_number', $customerAccountNumber)->first();
+            if ($customer) {
+                $customer->wallet += $model->total_amount;
+                $customer->save(); // 🔁 MUST SAVE after update
+            }
+
+
     
             return response([
                 "status_code" => "200",
@@ -171,6 +182,13 @@ class MilkCollectionController extends Controller
            ];
    
            MilkCollection::where('id', $id)->update($model);
+  $customerAccountNumber = $request->customer_account_number;
+        $customer = Customer::where('account_number', $customerAccountNumber)->first();
+        if ($customer) {
+            $customer->wallet += $request->total_amount;
+            $customer->save();
+        }
+
            $data = MilkCollection::find($id); // Fetch updated data
    
            return response([

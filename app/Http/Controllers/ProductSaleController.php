@@ -39,6 +39,7 @@ class ProductSaleController extends Controller
         $totals = $request->total;
 
         $insertData = [];
+         $grandTotal = 0;
 
         for ($i = 0; $i < count($categoryIds); $i++) {
             $insertData[] = [
@@ -53,9 +54,19 @@ class ProductSaleController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
+             $grandTotal += $totals[$i]; 
         }
 
         \DB::table('product_sales')->insert($insertData);
+
+    $customerAccountNumber = $request->customer_account_number;
+        $customer = Customer::where('account_number', $customerAccountNumber)->first();
+
+        if ($customer) {
+            $customer->wallet -= $grandTotal;
+            $customer->save();
+        }
+
 
         return response([
             "status_code" => 200,
@@ -177,6 +188,12 @@ public function update(Request $request, $id)
                 'total' => $request->total,
                 'updated_at' => now(),
             ]);
+              $customerAccountNumber = $request->customer_account_number;
+        $customer = Customer::where('account_number', $customerAccountNumber)->first();
+        if ($customer) {
+            $customer->wallet -= $request->total_amount;
+            $customer->save();
+        }
 
         if (!$updated) {
             return response([
