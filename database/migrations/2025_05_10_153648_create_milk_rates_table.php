@@ -14,6 +14,14 @@ return new class extends Migration
         Schema::create('milk_rates', function (Blueprint $table) {
             $table->id();
             $table->decimal('fat', 3, 1);
+            $table->decimal('snf_7_5', 6, 2)->nullable();
+            $table->decimal('snf_7_6', 6, 2)->nullable();
+            $table->decimal('snf_7_7', 6, 2)->nullable();
+            $table->decimal('snf_7_8', 6, 2)->nullable();
+            $table->decimal('snf_7_9', 6, 2)->nullable();
+            $table->decimal('snf_8_0', 6, 2)->nullable();
+            $table->decimal('snf_8_1', 6, 2)->nullable();
+            $table->decimal('snf_8_2', 6, 2)->nullable();
             $table->decimal('snf_8_3', 6, 2)->nullable();
             $table->decimal('snf_8_4', 6, 2)->nullable();
             $table->decimal('snf_8_5', 6, 2)->nullable();

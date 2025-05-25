@@ -11,6 +11,7 @@ use App\Http\Controllers\ProductStockController;
 use App\Http\Controllers\SnfFormulaController;
 use App\Http\Controllers\DailyMilkSaleController;
 use App\Http\Controllers\MilkDispatchController;
+use App\Http\Controllers\ProductSaleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -92,6 +93,19 @@ Route::get('/all-milk-dispatch', [MilkDispatchController::class,'all']);
 Route::get('/edit-milk-dispatch/{id}', [MilkDispatchController::class,'edit']);
 Route::post('/update-milk-dispatch/{id}', [MilkDispatchController::class,'update']);
 Route::post('/delete-milk-dispatch/{id}', [MilkDispatchController::class,'delete']);
+
+
+
+///////////////////Product  Sale//////////////////////////////////
+Route::post('/product-sale-submit', [ProductSaleController::class,'submit']);
+Route::get('/all-product-sale', [ProductSaleController::class,'all']);
+Route::get('/edit-product-sale/{id}', [ProductSaleController::class,'edit']);
+Route::post('/update-product-sale/{id}', [ProductSaleController::class,'update']);
+Route::post('/delete-product-sale/{id}', [ProductSaleController::class,'delete']);
+
+
+
+
 
 
 
