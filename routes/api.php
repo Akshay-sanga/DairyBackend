@@ -12,6 +12,9 @@ use App\Http\Controllers\SnfFormulaController;
 use App\Http\Controllers\DailyMilkSaleController;
 use App\Http\Controllers\MilkDispatchController;
 use App\Http\Controllers\ProductSaleController;
+use App\Http\Controllers\HeadDairyMasterController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -104,8 +107,31 @@ Route::post('/update-product-sale/{id}', [ProductSaleController::class,'update']
 Route::post('/delete-product-sale/{id}', [ProductSaleController::class,'delete']);
 
 
+///////////////////Head Dairy Master//////////////////////////////////
+Route::post('/head-dairy-master-submit', [HeadDairyMasterController::class,'submit']);
+Route::get('/all-head-dairy-master', [HeadDairyMasterController::class,'all']);
+Route::get('/edit-head-dairy-master/{id}', [HeadDairyMasterController::class,'edit']);
+Route::post('/update-head-dairy-master/{id}', [HeadDairyMasterController::class,'update']);
+Route::post('/delete-head-dairy-master/{id}', [HeadDairyMasterController::class,'delete']);
+Route::post('/update-status-head-dairy-master/{id}', [HeadDairyMasterController::class,'UpdateStatus']);
 
 
+////////////////////fetch head dairy data///////////////////////////////
+Route::get('/fetch-head-dairy', [HeadDairyMasterController::class,'fetch']);
+
+
+///////////////////Payments//////////////////////////////////
+Route::post('/payment-submit', [PaymentController::class,'submit']);
+Route::get('/all-customer-payment', [PaymentController::class,'allcustomerPayment']);
+Route::get('/all-head-dairy-payment', [PaymentController::class,'allheaddairyPayment']);
+Route::get('/edit-payment/{id}', [PaymentController::class,'edit']);
+Route::post('/update-payment/{id}', [PaymentController::class,'update']);
+Route::post('/delete-payment/{id}', [PaymentController::class,'delete']);
+
+
+
+//////////////////////////Customer Report////////////////////////////
+Route::get('/customer-report', [ReportController::class,'fetchCustomerRepost']);
 
 
 

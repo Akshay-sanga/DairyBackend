@@ -15,6 +15,7 @@ class MilkCollectionController extends Controller
             "customer_account_number" => "required",
             "shift" => "required",
             "milk_type" => "required",
+            "date" => "required",
             "quantity" => "required",
             "clr" => "required",
             "fat" => "required",
@@ -38,6 +39,7 @@ class MilkCollectionController extends Controller
             $model = new MilkCollection();
             $model->admin_id=$adminId;
             $model->customer_account_number = $request->customer_account_number;
+            $model->date = $request->date;
             $model->shift = $request->shift;
             $model->milk_type = $request->milk_type;
             $model->quantity = $request->quantity;
@@ -81,7 +83,7 @@ class MilkCollectionController extends Controller
    {
        try {
         $adminId=auth()->user()->id;
-           $data = MilkCollection::where('admin_id',$adminId)->paginate(10); // remove ->all()
+           $data = MilkCollection::with('customer')->where('admin_id',$adminId)->paginate(10); // remove ->all()
            return response([
                "status_code" => "200",
                "message" => "All Milk Collection Data Fetched Successfully",
@@ -138,10 +140,11 @@ class MilkCollectionController extends Controller
        }
    }
 
-   public function update(Request $request, $id)
-   {
-       $validator = Validator::make($request->all(), [
+  public function update(Request $request, $id)
+{
+    $validator = Validator::make($request->all(), [
         "customer_account_number" => "required",
+        "date" => "date",
         "shift" => "required",
         "milk_type" => "required",
         "quantity" => "required",
@@ -154,56 +157,69 @@ class MilkCollectionController extends Controller
         "name" => "required",
         "spouse" => "required",
         "mobile" => "required",
-       ]);
-   
-       if ($validator->fails()) {
-           $errors = $validator->errors();
-           return response([
-               "status_code" => 422,
-               "message" => $errors->first()
-           ]);
-       }
-   
-       try {
-           $model = [
-               'customer_account_number' => $request->customer_account_number,
-               'milk_type' => $request->milk_type,
-               'shift' => $request->shift,
-               'quantity' => $request->quantity,
-               'clr' => $request->clr,
-               'fat' => $request->fat,
-               'snf' => $request->snf,
-               'base_rate' => $request->base_rate,
-               'other_price' => $request->other_price,
-               'total_amount' => $request->total_amount,
-               'name' => $request->name,
-               'spouse' => $request->spouse,
-               'mobile' => $request->mobile,
-           ];
-   
-           MilkCollection::where('id', $id)->update($model);
-  $customerAccountNumber = $request->customer_account_number;
-        $customer = Customer::where('account_number', $customerAccountNumber)->first();
+    ]);
+
+    if ($validator->fails()) {
+        $errors = $validator->errors();
+        return response([
+            "status_code" => 422,
+            "message" => $errors->first()
+        ]);
+    }
+
+    try {
+        $collection = MilkCollection::find($id);
+
+        if (!$collection) {
+            return response([
+                "status_code" => 404,
+                "message" => "Record not found."
+            ]);
+        }
+
+        $oldAmount = $collection->total_amount;
+
+        $model = [
+            'customer_account_number' => $request->customer_account_number,
+            'milk_type' => $request->milk_type,
+            'date' => $request->date,
+            'shift' => $request->shift,
+            'quantity' => $request->quantity,
+            'clr' => $request->clr,
+            'fat' => $request->fat,
+            'snf' => $request->snf,
+            'base_rate' => $request->base_rate,
+            'other_price' => $request->other_price,
+            'total_amount' => $request->total_amount,
+            'name' => $request->name,
+            'spouse' => $request->spouse,
+            'mobile' => $request->mobile,
+        ];
+
+        MilkCollection::where('id', $id)->update($model);
+
+        $customer = Customer::where('account_number', $request->customer_account_number)->first();
+
         if ($customer) {
-            $customer->wallet += $request->total_amount;
+            $walletDiff = $request->total_amount - $oldAmount;
+            $customer->wallet += $walletDiff;
             $customer->save();
         }
 
-           $data = MilkCollection::find($id); // Fetch updated data
-   
-           return response([
-               "status_code" => 200,
-               "message" => "Collection data updated successfully",
-               "data" => $data
-           ]);
-   
-       } catch (\Exception $e) {
-           return response()->json([
-               'status_code' => 500,
-               'message' => 'Something went wrong.',
-           ]);
-       }
+        $data = MilkCollection::find($id); // Fetch updated data
+
+        return response([
+            "status_code" => 200,
+            "message" => "Collection data updated successfully",
+            "data" => $data
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'status_code' => 500,
+            'message' => 'Something went wrong.',
+        ]);
     }
-   
+}
 
 }

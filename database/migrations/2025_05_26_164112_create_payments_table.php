@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('milk_dispatches', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
             $table->string('admin_id')->nullable();
-            $table->string('dispatch_date')->nullable();
-            $table->string('shift')->nullable();
             $table->string('head_dairy_id')->nullable();
-            $table->string('vehicle_no')->nullable();
-            $table->string('total_qty')->nullable();
-            $table->string('total_amount')->nullable();
-            $table->string('milk_details')->nullable();
-            $table->string('notes')->nullable();
+            $table->string('customer_account_number')->nullable();
+            $table->string('date')->nullable();
+            $table->string('amount')->nullable();
+            $table->string('type')->nullable();
+            $table->string('mode')->nullable();
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('milk_dispatches');
+        Schema::dropIfExists('payments');
     }
 };
