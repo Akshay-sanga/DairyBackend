@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Artisan;
 
 // Optimization#############************************
 Route::get('/optimize', function () {
-    $exitCode = Artisan::call('optimize:clear');
+    $exitCode = Artisan::call('optimize');
 
     // Check if the command ran successfully
     if ($exitCode === 0) {

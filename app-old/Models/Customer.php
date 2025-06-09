@@ -10,9 +10,5 @@ class Customer extends Model
 {
     use HasFactory;
 
-   // Customer.php
-public function productSales()
-{
-    return $this->hasMany(ProductSale::class, 'customer_account_number', 'account_number');
-}
+   
 }

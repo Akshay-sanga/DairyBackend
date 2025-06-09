@@ -17,6 +17,6 @@ class ProductSale extends Model
 
        public function product()
 {
-    return $this->belongsTo(ProductMaster::class, 'category_id','id');
+    return $this->belongsTo(ProductMaster::class, 'product_id','id');
 }
 }

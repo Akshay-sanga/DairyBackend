@@ -3,10 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
-use App\Models\MilkCollection;
-use App\Models\ProductStock;
-use App\Models\Customer;
-use App\Models\DailyMilkSale;
 use App\Models\Otp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -251,31 +247,4 @@ class AdminController extends Controller
         ];
         return response($response);
     }
-    
-    
-    
-    
-    
-    ///////////////////////////////////dashboard///////////////////////////////////////////////
-    
-    public function dashboard()
-    {
-        try{
-            $data['totalCustomer'] = Customer::count();
-               return response()->json([
-            'status_code' => 200,
-            'message' => 'Dashboard Data Fetch Successfully',
-            'data' => $data
-        ]);
-            
-        }
-        catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to create storage link.', 'error' => $e->getMessage()], 500);
-        }
-        
-    }
-    
-    
-    
-    
 }

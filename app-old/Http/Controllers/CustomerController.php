@@ -20,6 +20,7 @@ class CustomerController extends Controller
             "pincode" => "required",
             "contact_person" => "required",
             "designation" => "required",
+            "pan_number" => "required|unique:customers,pan_number",
             "state" => "required",
         ]);
     
@@ -39,7 +40,6 @@ class CustomerController extends Controller
             $model->admin_id = $adminId;
             $model->account_number = $account_number;
             $model->name = $request->name;
-            $model->careof = $request->careof;
             $model->mobile = $request->mobile;
             $model->email = $request->email;
             $model->address = $request->address;
@@ -47,6 +47,7 @@ class CustomerController extends Controller
             $model->pincode = $request->pincode;
             $model->contact_person = $request->contact_person;
             $model->designation = $request->designation;
+            $model->pan_number = $request->pan_number;
             $model->state = $request->state;
             $model->wallet = '0';
             $model->status = '1';
@@ -173,6 +174,7 @@ class CustomerController extends Controller
            "pincode" => "required",
            "contact_person" => "required",
            "designation" => "required",
+           "pan_number" => "required|unique:customers,pan_number,$id",
            "state" => "required",
        ]);
    
@@ -187,7 +189,6 @@ class CustomerController extends Controller
        try {
            $model = [
                'name' => $request->name,
-               'careof' => $request->careof,
                'mobile' => $request->mobile,
                'email' => $request->email,
                'address' => $request->address,
