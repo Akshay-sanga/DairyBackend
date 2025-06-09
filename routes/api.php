@@ -11,6 +11,10 @@ use App\Http\Controllers\ProductStockController;
 use App\Http\Controllers\SnfFormulaController;
 use App\Http\Controllers\DailyMilkSaleController;
 use App\Http\Controllers\MilkDispatchController;
+use App\Http\Controllers\ProductSaleController;
+use App\Http\Controllers\HeadDairyMasterController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +32,10 @@ Route::post('/forget-password', [AdminController::class, 'ForgetPassword']);
 Route::post('/login-admin', [AdminController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    
+    //////////////////////////////////Dashboard////////////////////////////////////////
+Route::get('/dashboard', [AdminController::class, 'dashboard']);
+    
 
     ///////////////////////////////customer//////////////////////////
 Route::post('/customer-submit', [CustomerController::class,'submit']);
@@ -92,6 +100,43 @@ Route::get('/all-milk-dispatch', [MilkDispatchController::class,'all']);
 Route::get('/edit-milk-dispatch/{id}', [MilkDispatchController::class,'edit']);
 Route::post('/update-milk-dispatch/{id}', [MilkDispatchController::class,'update']);
 Route::post('/delete-milk-dispatch/{id}', [MilkDispatchController::class,'delete']);
+
+
+
+///////////////////Product  Sale//////////////////////////////////
+Route::post('/product-sale-submit', [ProductSaleController::class,'submit']);
+Route::get('/all-product-sale', [ProductSaleController::class,'all']);
+Route::get('/edit-product-sale/{id}', [ProductSaleController::class,'edit']);
+Route::post('/update-product-sale/{id}', [ProductSaleController::class,'update']);
+Route::post('/delete-product-sale/{id}', [ProductSaleController::class,'delete']);
+Route::any('/fetch-product', [ProductSaleController::class,'fetchProduct']);
+
+
+///////////////////Head Dairy Master//////////////////////////////////
+Route::post('/head-dairy-master-submit', [HeadDairyMasterController::class,'submit']);
+Route::get('/all-head-dairy-master', [HeadDairyMasterController::class,'all']);
+Route::get('/edit-head-dairy-master/{id}', [HeadDairyMasterController::class,'edit']);
+Route::post('/update-head-dairy-master/{id}', [HeadDairyMasterController::class,'update']);
+Route::post('/delete-head-dairy-master/{id}', [HeadDairyMasterController::class,'delete']);
+Route::post('/update-status-head-dairy-master/{id}', [HeadDairyMasterController::class,'UpdateStatus']);
+
+
+////////////////////fetch head dairy data///////////////////////////////
+Route::get('/fetch-head-dairy', [HeadDairyMasterController::class,'fetch']);
+
+
+///////////////////Payments//////////////////////////////////
+Route::post('/payment-submit', [PaymentController::class,'submit']);
+Route::get('/all-customer-payment', [PaymentController::class,'allcustomerPayment']);
+Route::get('/all-head-dairy-payment', [PaymentController::class,'allheaddairyPayment']);
+Route::get('/edit-payment/{id}', [PaymentController::class,'edit']);
+Route::post('/update-payment/{id}', [PaymentController::class,'update']);
+Route::post('/delete-payment/{id}', [PaymentController::class,'delete']);
+
+
+
+//////////////////////////Customer Report////////////////////////////
+Route::get('/customer-report', [ReportController::class,'fetchCustomerReport']);
 
 
 

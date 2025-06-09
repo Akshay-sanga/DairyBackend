@@ -139,6 +139,7 @@ class ProductMasterController extends Controller
     {
         try{
             ProductMaster::where('id',$id)->delete();
+            ProductStock::where('product_id','$id')->delete();
             return response()->json([
                 'status_code'=>'200',
                 'response'=>'success',

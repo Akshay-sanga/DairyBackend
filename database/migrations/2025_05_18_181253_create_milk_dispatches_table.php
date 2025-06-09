@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('admin_id')->nullable();
             $table->string('dispatch_date')->nullable();
             $table->string('shift')->nullable();
-            $table->string('head_dairy_name')->nullable();
+            $table->string('head_dairy_id')->nullable();
             $table->string('vehicle_no')->nullable();
             $table->string('total_qty')->nullable();
             $table->string('total_amount')->nullable();
