@@ -12,6 +12,7 @@ class CustomerController extends Controller
     public function submit(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            "customer_type" => "required",
             "name" => "required",
             "mobile" => "required|unique:customers,mobile",
             "email" => "required|unique:customers,email",
@@ -37,6 +38,7 @@ class CustomerController extends Controller
     
             $model = new Customer();
             $model->admin_id = $adminId;
+            $model->customer_type = $customer_type;
             $model->account_number = $account_number;
             $model->name = $request->name;
             $model->careof = $request->careof;
@@ -162,59 +164,67 @@ class CustomerController extends Controller
 
 
    
-   public function update(Request $request, $id)
-   {
-       $validator = Validator::make($request->all(), [
-           "name" => "required",
-           "mobile" => "required|unique:customers,mobile,$id",
-           "email" => "required|email|unique:customers,email,$id",
-           "address" => "required",
-           "city" => "required",
-           "pincode" => "required",
-           "contact_person" => "required",
-           "designation" => "required",
-           "state" => "required",
-       ]);
+  
    
-       if ($validator->fails()) {
-           $errors = $validator->errors();
-           return response([
-               "status_code" => 422,
-               "message" => $errors->first()
-           ]);
-       }
-   
-       try {
-           $model = [
-               'name' => $request->name,
-               'careof' => $request->careof,
-               'mobile' => $request->mobile,
-               'email' => $request->email,
-               'address' => $request->address,
-               'city' => $request->city,
-               'pincode' => $request->pincode,
-               'contact_person' => $request->contact_person,
-               'designation' => $request->designation,
-               'pan_number' => $request->pan_number,
-               'state' => $request->state,
-           ];
-   
-           Customer::where('id', $id)->update($model);
-           $data = Customer::find($id); // Fetch updated data
-   
-           return response([
-               "status_code" => 200,
-               "message" => "Customer data updated successfully",
-               "data" => $data
-           ]);
-   
-       } catch (\Exception $e) {
-           return response()->json([
-               'status_code' => 500,
-               'message' => 'Something went wrong.',
-           ]);
-       }
+public function update(Request $request, $id)
+{
+    $validator = Validator::make($request->all(), [
+        "customer_type" => "required",
+        "name" => "required",
+        "mobile" => "required|unique:customers,mobile,$id",
+        "address" => "required",
+        "city" => "required",
+        "pincode" => "required",
+        "contact_person" => "required",
+        "designation" => "required",
+        "state" => "required",
+    ]);
+
+    if ($validator->fails()) {
+        return response([
+            "status_code" => 422,
+            "message" => $validator->errors()->first()
+        ]);
     }
+
+    // Check for duplicate account number but allow current record
+    $account = Customer::where('account_number', $request->account_number)
+        ->where('id', '!=', $id)
+        ->first();
+
+    if ($account) {
+        return response()->json([
+            'status_code' => 422,
+            'message' => 'This Account Number is already allotted'
+        ]);
+    }
+
+    // Prepare update data
+    $model = [
+        'customer_type' => $request->customer_type,
+        'name' => $request->name,
+        'careof' => $request->careof,
+        'mobile' => $request->mobile,
+        'account_number' => $request->account_number,
+        'email' => $request->email,
+        'address' => $request->address,
+        'city' => $request->city,
+        'pincode' => $request->pincode,
+        'contact_person' => $request->contact_person,
+        'designation' => $request->designation,
+        'state' => $request->state,
+    ];
+
+    Customer::where('id', $id)->update($model);
+    $data = Customer::find($id);
+
+    return response([
+        "status_code" => 200,
+        "message" => "Customer data updated successfully",
+        "data" => $data
+    ]);
+}
+
     
     
     

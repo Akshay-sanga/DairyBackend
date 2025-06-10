@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Report;
 use App\Models\Customer;
 use App\Models\ProductSale;
+use App\Models\DailyMilkSale;
 use App\Models\MilkCollection;
 use App\Models\Payment;
 use Illuminate\Http\Request;
@@ -23,23 +24,23 @@ public function fetchCustomerReport(Request $request)
     try {
         $accountNumber = $request->customer_account_number;
 
-        // Convert input d-m-Y to Y-m-d for DB query on DATE fields
+        // Convert to Y-m-d for DB columns using DATE type
         $startDateForDateColumn = \Carbon\Carbon::createFromFormat('d-m-Y', $request->start_date)->format('Y-m-d');
         $endDateForDateColumn = \Carbon\Carbon::createFromFormat('d-m-Y', $request->end_date)->format('Y-m-d');
 
-        // Dates for string-based d-m-Y columns
+        // Use original format for STR_TO_DATE queries
         $startDateInput = $request->start_date;
         $endDateInput = $request->end_date;
 
-        /** 1. Milk Collection — (Y-m-d format in DB) */
+        /** 1. Milk Collection */
         $milkCollections = MilkCollection::where('customer_account_number', $accountNumber)
             ->whereBetween('date', [$startDateForDateColumn, $endDateForDateColumn])
             ->get();
 
-        $milkTotalCollecttion = $milkCollections->sum('quantity');
+        $milkTotalCollection = $milkCollections->sum('quantity');
         $milkTotal = $milkCollections->sum('total_amount');
 
-        /** 2. Product Sale — (stored as string in d-m-Y) */
+        /** 2. Product Sale */
         $productSales = ProductSale::where('customer_account_number', $accountNumber)
             ->whereRaw("STR_TO_DATE(`date`, '%d-%m-%Y') BETWEEN STR_TO_DATE(?, '%d-%m-%Y') AND STR_TO_DATE(?, '%d-%m-%Y')", [
                 $startDateInput,
@@ -49,7 +50,7 @@ public function fetchCustomerReport(Request $request)
 
         $productTotal = $productSales->sum('total');
 
-        /** 3. Payment — (stored as string in d-m-Y) */
+        /** 3. Payment */
         $payments = Payment::where('customer_account_number', $accountNumber)
             ->whereRaw("STR_TO_DATE(`date`, '%d-%m-%Y') BETWEEN STR_TO_DATE(?, '%d-%m-%Y') AND STR_TO_DATE(?, '%d-%m-%Y')", [
                 $startDateInput,
@@ -59,15 +60,30 @@ public function fetchCustomerReport(Request $request)
 
         $paymentTotal = $payments->sum('amount');
 
-        /** 4. Customer Wallet */
+        /** 4. Customer Wallet & Buyer Milk Sale */
         $customer = Customer::where('account_number', $accountNumber)->first();
+        $buyerMilk = collect(); // empty collection by default
+        $buyerMilkQty = 0;
+        $buyerMilkTotal = 0;
+
+        if ($customer && $customer->customer_type == 'Buyer') {
+            $buyerMilk = DailyMilkSale::where('customer_account_number', $accountNumber)
+                ->whereRaw("STR_TO_DATE(`sale_date`, '%d-%m-%Y') BETWEEN STR_TO_DATE(?, '%d-%m-%Y') AND STR_TO_DATE(?, '%d-%m-%Y')", [
+                    $startDateInput,
+                    $endDateInput
+                ])
+                ->get();
+
+            $buyerMilkQty = $buyerMilk->sum('quentity');
+            $buyerMilkTotal = $buyerMilk->sum('total_amount');
+        }
 
         return response()->json([
             'status_code' => 200,
             'message' => 'Customer report fetched successfully',
             'data' => [
                 'milk_collections' => $milkCollections,
-                'total_milk_collections' => $milkTotalCollecttion,
+                'total_milk_collections' => $milkTotalCollection,
                 'milk_total_amount' => $milkTotal,
 
                 'product_sales' => $productSales,
@@ -75,6 +91,10 @@ public function fetchCustomerReport(Request $request)
 
                 'payments' => $payments,
                 'payment_total_amount' => $paymentTotal,
+
+                'buyer_milk_sales' => $buyerMilk,
+                'buyer_milk_total_quantity' => $buyerMilkQty,
+                'buyer_milk_total_amount' => $buyerMilkTotal,
 
                 'customer_wallet' => $customer?->wallet,
                 'customer_name' => $customer?->name,
@@ -88,6 +108,7 @@ public function fetchCustomerReport(Request $request)
         ]);
     }
 }
+
 
 
 
