@@ -138,6 +138,9 @@ Route::post('/delete-payment/{id}', [PaymentController::class,'delete']);
 //////////////////////////Customer Report////////////////////////////
 Route::get('/customer-report', [ReportController::class,'fetchCustomerReport']);
 
+//////////////////////////Payment Register////////////////////////////
+Route::get('/payment-register', [ReportController::class,'fetchPaymentRegister']);
+
 
 
 
